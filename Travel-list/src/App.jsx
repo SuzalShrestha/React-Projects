@@ -1,19 +1,42 @@
 import { useState } from "react";
-
 const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: false },
-  { id: 2, description: "Socks", quantity: 12, packed: false },
-  { id: 3, description: "Books", quantity: 10, packed: true },
-  { id: 4, description: "Clothes", quantity: 4, packed: false },
-  { id: 5, description: "Laptop", quantity: 1, packed: false },
-  { id: 6, description: "Currency", quantity: 1200, packed: true },
+  { id: 1, description: "Pants", quantity: 3, packed: false },
+  { id: 2, description: "Jacket", quantity: 1, packed: false },
+  { id: 3, description: "iPhone Charger", quantity: 1, packed: false },
+  { id: 4, description: "MacBook", quantity: 1, packed: false },
+  { id: 5, description: "Sleeping Pills", quantity: 1, packed: true },
+  { id: 6, description: "Underwear", quantity: 5, packed: false },
+  { id: 7, description: "Hat", quantity: 1, packed: false },
+  { id: 8, description: "T-Shirts", quantity: 5, packed: false },
+  { id: 9, description: "Belt", quantity: 1, packed: false },
+  { id: 10, description: "Passport", quantity: 1, packed: true },
+  { id: 11, description: "Sandwich", quantity: 1, packed: true },
 ];
 function App() {
+  const [items, setItems] = useState(initialItems);
+  function handleAddItem(item) {
+    setItems([...items, item]);
+  }
+  function handleRemoveItem(id) {
+    console.log(id);
+    setItems(items.filter((i) => i.id !== id));
+  }
+  function handleToggleItem(id) {
+    setItems(
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
+    );
+  }
   return (
     <div className="App">
       <Logo />
-      <Form />
-      <PackingList />
+      <Form onAddItem={handleAddItem} />
+      <PackingList
+        items={items}
+        onRemoveItem={handleRemoveItem}
+        onToggleItem={handleToggleItem}
+      />
       <Stats />
     </div>
   );
@@ -21,13 +44,14 @@ function App() {
 function Logo() {
   return <h1>Far Away</h1>;
 }
-function Form() {
+function Form({ onAddItem }) {
   const [description, setDescription] = useState("");
   const [quantity, setquantity] = useState(1);
+
   function handleSubmit(e) {
     e.preventDefault();
     const newItem = { id: Date.now(), description, quantity, packed: false };
-    console.log(newItem);
+    onAddItem(newItem);
   }
   return (
     <form className="add-form" onSubmit={handleSubmit}>
@@ -55,12 +79,19 @@ function Form() {
     </form>
   );
 }
-function PackingList() {
+function PackingList({ items, onRemoveItem, onToggleItem }) {
   return (
     <div className="list">
       <ul>
-        {initialItems.map((item) => {
-          return <Item item={item} key={item.id} />;
+        {items.map((item) => {
+          return (
+            <Item
+              item={item}
+              key={item.id}
+              onRemoveItem={onRemoveItem}
+              onToggleItem={onToggleItem}
+            />
+          );
         })}
       </ul>
     </div>
@@ -75,13 +106,26 @@ function Stats() {
     </footer>
   );
 }
-function Item({ item }) {
+function Item({ item, onRemoveItem, onToggleItem }) {
   return (
     <li>
+      <input
+        type="checkbox"
+        checked={item.packed}
+        onChange={() => {
+          onToggleItem(item.id);
+        }}
+      />
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
         {item.quantity} - {item.description}
       </span>
-      <button>X</button>
+      <button
+        onClick={() => {
+          onRemoveItem(item.id);
+        }}
+      >
+        X
+      </button>
     </li>
   );
 }
