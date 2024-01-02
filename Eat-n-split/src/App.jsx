@@ -22,12 +22,10 @@ const initialFriends = [
 function App() {
   return (
     <div className="app">
-      <h1>Eat-n-split</h1>
       <FriendsList />
     </div>
   );
 }
-function Form() {}
 function FriendsList() {
   const [friends, setFriends] = useState(initialFriends);
   return (
@@ -46,7 +44,17 @@ function Friend({ friend }) {
     <li>
       <img src={friend.image} alt="friend.name" />
       <h3>{friend.name}</h3>
-      <p>{friend.balance}</p>
+      {friend.balance > 0 ? (
+        <p className="green">
+          `${friend.name} owes you ${friend.balance}`
+        </p>
+      ) : friend.balance < 0 ? (
+        <p className="red">
+          `You owe your friend ${friend.name} ${Math.abs(friend.balance)}`
+        </p>
+      ) : (
+        <p>`${friend.name} is all even with you`</p>
+      )}
       <button className="button">Select</button>
     </li>
   );
