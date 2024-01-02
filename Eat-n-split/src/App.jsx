@@ -21,23 +21,21 @@ const initialFriends = [
 ];
 function App() {
   const [friends, setFriends] = useState(initialFriends);
-  const [addFriend, setAddFriend] = useState(false);
+  const [showAddFriend, setShowAddFriend] = useState(false);
   function handleAddFriend() {
-    setAddFriend(!addFriend);
+    setShowAddFriend(!showAddFriend);
   }
 
   return (
     <div className="app">
       <div className="sidebar">
         <FriendsList friends={friends} />
-        {addFriend ? (
-          <>
-            <FormAddFriend friends={friends} onAddFriend={setFriends} />
-            <Button onClick={handleAddFriend}>Close</Button>
-          </>
-        ) : (
-          <Button onClick={handleAddFriend}>Add Friend</Button>
+        {showAddFriend && (
+          <FormAddFriend friends={friends} onAddFriend={setFriends} />
         )}
+        <Button onClick={handleAddFriend}>
+          {showAddFriend ? "Close" : "Add Friend"}
+        </Button>
       </div>
       <FormSplitBill />
     </div>
