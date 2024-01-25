@@ -54,17 +54,31 @@ const average = (arr) =>
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState("");
+  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const query = "matrix";
+  const query = "sssssdddfsfdsfdfs";
   useEffect(function () {
     async function fetchData() {
-      setIsLoading(true);
-      const res = await fetch(
-        `https://www.omdbapi.com/?apikey=${APIkey}&s=${query}`
-      );
-      const data = await res.json();
-      setMovies(data.Search);
-      setIsLoading(false);
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `https://www.omdbapi.com/?apikey=${APIkey}&s=${query}`
+        );
+        if (!res.ok) {
+          throw new Error("Something Went Wrong while fetching data");
+        }
+        const data = await res.json();
+        console.log(data);
+        if (data.Response === "False") {
+          throw new Error(data.Error);
+        }
+        setMovies(data.Search);
+        setIsLoading(false);
+      } catch (err) {
+        console.error(err.message);
+        setError(err.message);
+        setIsLoading(false);
+      }
     }
     fetchData();
   }, []);
@@ -76,7 +90,9 @@ export default function App() {
       </NavBar>
       <Main>
         <ListBox>
-          {isLoading ? <Loader /> : <MoviesList movies={movies} />}
+          {isLoading && <Loader />}
+          {!isLoading && !error && <MoviesList movies={movies} />}
+          {error && <ErrorMessage error={error} />}
         </ListBox>
         <WatchedBox />
       </Main>
@@ -85,6 +101,9 @@ export default function App() {
 }
 function Loader() {
   return <p className="loader">Loading....</p>;
+}
+function ErrorMessage({ error }) {
+  return <p className="error">{error}</p>;
 }
 function NavBar({ children }) {
   return (
