@@ -9,7 +9,9 @@
     --color-red: #fa5252;
     --color-red-dark: #e03131;
   }
-  
+  ::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
   * {
     margin: 0;
     padding: 0;
