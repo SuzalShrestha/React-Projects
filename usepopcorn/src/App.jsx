@@ -113,6 +113,7 @@ export default function App() {
         setError(null);
         return;
       }
+      handleCloseMovie();
       fetchData();
       return function () {
         controller.abort();
@@ -191,6 +192,22 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
     onAddWatched(newMovie);
     onCloseMovie();
   }
+  //placed here because it should only be run when moviesdetails is mounted
+  useEffect(
+    function () {
+      function callBack(e) {
+        if (e.key === "Escape") {
+          onCloseMovie();
+          console.log("Escape pressed");
+        }
+      }
+      document.addEventListener("keydown", callBack);
+      return function () {
+        document.removeEventListener("keydown", callBack);
+      };
+    },
+    [onCloseMovie]
+  );
   //set title of page
   useEffect(
     function () {
